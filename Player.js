@@ -1,15 +1,27 @@
 let Player = {
     
-    init: function() {
+    init: function(playerDimension) {
+        this.playerDimension = playerDimension
         this.position = 1, // index of grid div
         this.direction = 1,
         this.directionWord = 'right'
-        this.cssClass = ['player', 'right'],
+        this.cssClass = ['player', 'right']
         this.nextPosition = 1,
         this.gridWidth = 0 // set by Movement
         document.addEventListener('keyup', Player.control)
 
     },
+
+    create: function() {
+        let div = document.createElement('div')
+        div.classList.add(...this.cssClass)
+        div.style.width = this.playerDimension + 'px'
+        div.style.height = this.playerDimension + 'px'
+        div.style.left = 0
+        div.style.top = 0
+        return div
+    },
+
     //assign functions to keycodes
     control: function(e) {
         

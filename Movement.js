@@ -2,6 +2,8 @@
 let Movement = {
     init: function(Player, grid) {
         this.player = Player
+        this.playerDiv = this.player.create()
+        this.grid = grid
         this.gridWidth = grid.width()
         this.player.gridWidth = this.gridWidth
         this.cells = document.querySelectorAll('.grid div')
@@ -9,8 +11,12 @@ let Movement = {
         this.setRightBorderCells()
         this.leftBorderCells = []
         this.setLeftBorderCells()
-        
+        this.placePlayerInGrid()
         this.advancePlayer()
+    },
+
+    placePlayerInGrid: function() {
+        this.grid.htmlEl.appendChild(this.playerDiv)
     },
 
     setRightBorderCells: function() {
@@ -21,7 +27,6 @@ let Movement = {
             cellIndex = ( i * this.gridWidth ) -1
             this.rightBorderCells.push(cellIndex)
         }
-        console.log(this.rightBorderCells)
     },
     
     setLeftBorderCells: function() {
@@ -32,21 +37,37 @@ let Movement = {
             index = i * this.gridWidth
             this.leftBorderCells.push(index)
         }
-        console.log(this.leftBorderCells)
     },
 
     placePlayerInNextCell: function() {
-        // place player in grid
-        this.cells[this.player.position].className = ''
+        // move player div
         this.player.position = this.player.nextPosition
-        this.cells[this.player.position].classList.add(...this.player.cssClass)
+        let direct = this.player.directionWord
+        let pos, step = this.grid.celldimension
+        console.log(direct)
+        if ( direct == 'left' || direct == 'right') {
+            pos = this.playerDiv.style.left
+            pos = parseInt(pos.substr(0,pos.indexOf('px')))
+           
+            pos = (direct == 'left') ? pos - step : pos + step
+            
+            this.playerDiv.style.left = pos + 'px'
+        }
+        if ( direct == 'top' || direct == 'bottom') {
+            pos = this.playerDiv.style.top
+            pos = parseInt(pos.substr(0,pos.indexOf('px')))
+            
+            pos = (direct == 'top') ? pos - step : pos + step
+            
+            this.playerDiv.style.top = pos + 'px'
+        }
+        this.playerDiv.classList.add(direct)
+        console.log(this.playerDiv.style.left)
     },
     
     advancePlayer: function() {
         this.player.nextPosition = this.player.position + this.player.direction
-        this.cells[this.player.position].className = ''
-        this.player.cssClass = ['player', this.player.directionWord]
-        this.cells[this.player.position].classList.add(...this.player.cssClass)
+        this.playerDiv.className = 'player'
         if (this.rightBorderCells.includes(this.player.position) && this.player.direction === 1) {
             return // hit right border true
         }
